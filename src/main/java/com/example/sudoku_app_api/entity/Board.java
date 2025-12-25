@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.example.sudoku_app_api.entity.UserBoard.UserBoardId;
 
 import jakarta.persistence.CascadeType;
@@ -29,6 +31,7 @@ public class Board extends BaseEntity<Long> {
     private String name;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10) // 数独の一覧のページングにおけるN+1問題を軽減
     private List<Cell> cells = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
