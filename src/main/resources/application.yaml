@@ -21,6 +21,7 @@ spring:
           #OAuth2 / OIDC issuer URI
           # See README for vendor-specific examples
           issuer-uri: ${ISSUER_URI}
+          expected-audience: ${EXPECTED_AUDIENCE}
 
   flyway:
     enabled: true
