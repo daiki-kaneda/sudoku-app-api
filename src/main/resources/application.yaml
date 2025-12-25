@@ -20,8 +20,8 @@ spring:
         jwt:
           #OAuth2 / OIDC issuer URI
           # See README for vendor-specific examples
-          issuer-uri: ${ISSUER_URI}
-          expected-audience: ${EXPECTED_AUDIENCE}
+          issuer-uri: ${ISSUER_URI:https://securetoken.google.com/REPLACE_ME}
+          expected-audience: ${EXPECTED_AUDIENCE:REPLACE_ME}
 
   flyway:
     enabled: true
