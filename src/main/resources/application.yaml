@@ -6,7 +6,6 @@ spring:
     username: user
     password: password
     driver-class-name: org.postgresql.Driver
-
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -15,6 +14,13 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #OAuth2 / OIDC issuer URI
+          # See README for vendor-specific examples
+          issuer-uri: ${ISSUER_URI}
 
   flyway:
     enabled: true
