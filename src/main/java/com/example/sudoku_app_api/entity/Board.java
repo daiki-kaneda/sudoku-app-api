@@ -54,6 +54,12 @@ public class Board extends BaseEntity<Long> {
                 .orElseThrow(() -> new IllegalStateException("Cell data is missing"));
     }
 
+    public long getTotalEmptyCells() {
+        return cells.stream()
+                .filter(c -> c.getInitialValue() == null)
+                .count();
+    }
+
     public UserBoardId createNewUserBoard(
             User user) {
         UserBoard newUserBoard = UserBoard.create(user, this);

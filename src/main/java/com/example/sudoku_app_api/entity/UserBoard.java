@@ -41,6 +41,10 @@ public class UserBoard extends BaseEntity<UserBoard.UserBoardId> {
 
     private Instant lastHintUsed;
 
+    public void setStatus(UserBoardStatus status) {
+        this.status = status;
+    }
+
     public static UserBoard create(User user, Board board) {
         UserBoardId id = UserBoardId.create(user.getUid(), board.getId());
         UserBoard userBoard = new UserBoard();
