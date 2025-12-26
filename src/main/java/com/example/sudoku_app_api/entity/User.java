@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity<String>{
+public class User extends BaseEntity<String> {
     @Id
     private String uid;
 
@@ -32,6 +32,14 @@ public class User extends BaseEntity<String>{
         user.name = name;
         user.email = email;
         return user;
+    }
+
+    public void setName(String newName) {
+        this.name = newName;
+    }
+
+    public void setEmail(String newEmail) {
+        this.email = newEmail;
     }
 
     @Override
