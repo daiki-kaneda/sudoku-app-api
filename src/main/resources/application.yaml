@@ -27,3 +27,7 @@ spring:
     enabled: true
     # PostgreSQL固有の型（ENUM等）を扱うため、必要に応じて設定
     baseline-on-migrate: true
+    
+sudoku:
+  game:
+    max-in-progress: 3
