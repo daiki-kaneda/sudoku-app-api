@@ -45,12 +45,12 @@ public class Log extends BaseEntity<Long> {
     public static Log create(
             UserBoard userBoard,
             Cell cell,
-            Integer inputValue,
+            Integer inputNumber,
             LogStatus status) {
         Log log = new Log();
         log.userBoard = userBoard;
         log.cell = cell;
-        log.inputNumber = inputValue;
+        log.inputNumber = inputNumber;
         log.status = status;
         return log;
     }
