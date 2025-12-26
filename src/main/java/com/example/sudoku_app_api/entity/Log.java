@@ -25,28 +25,32 @@ public class Log extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-        @JoinColumn(name = "uid",referencedColumnName = "uid"),
-        @JoinColumn(name = "board_id",referencedColumnName = "board_id")})
+            @JoinColumn(name = "uid", referencedColumnName = "uid"),
+            @JoinColumn(name = "board_id", referencedColumnName = "board_id") })
     private UserBoard userBoard;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-    @JoinColumn(name = "board_id", referencedColumnName = "board_id",insertable = false, updatable = false),
-    @JoinColumn(name = "row_idx", referencedColumnName = "row_idx",insertable = false, updatable = false),
-    @JoinColumn(name = "col_idx", referencedColumnName = "col_idx",insertable = false, updatable = false)})
+            @JoinColumn(name = "board_id", referencedColumnName = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "row_idx", referencedColumnName = "row_idx", insertable = false, updatable = false),
+            @JoinColumn(name = "col_idx", referencedColumnName = "col_idx", insertable = false, updatable = false) })
     private Cell cell;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LogStatus status; // solved,failed,hintUsed
 
+    private Integer inputNumber;
+
     public static Log create(
             UserBoard userBoard,
             Cell cell,
+            Integer inputValue,
             LogStatus status) {
         Log log = new Log();
         log.userBoard = userBoard;
         log.cell = cell;
+        log.inputNumber = inputValue;
         log.status = status;
         return log;
     }

@@ -41,14 +41,17 @@ public class Board extends BaseEntity<Long> {
         if (row < 0 || row > 8 || column < 0 || column > 8 || value < 1 || value > 9) {
             throw new IllegalArgumentException("Must be 0<=row,column<=8, 1<=value<=9");
         }
+        Cell cell = cellAt(row, column);
+        return cell.getCorrectValue() == value;
+    }
+
+    public Cell cellAt(int row, int column) {
         Map<Cell.CellId, Cell> cellMap = cells
                 .stream()
                 .collect(Collectors.toMap(c -> c.getId(), c -> c));
-
         Cell.CellId targetId = Cell.CellId.create(this.id, row, column);
-        Cell cell = Optional.ofNullable(cellMap.get(targetId))
+        return Optional.ofNullable(cellMap.get(targetId))
                 .orElseThrow(() -> new IllegalStateException("Cell data is missing"));
-        return cell.getCorrectValue() == value;
     }
 
     public UserBoardId createNewUserBoard(

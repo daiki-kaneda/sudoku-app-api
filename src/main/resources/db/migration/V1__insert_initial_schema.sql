@@ -50,12 +50,13 @@ CREATE TABLE log (
     uid VARCHAR(255),
     row_idx INTEGER,
     col_idx INTEGER,
+    input_number INTEGER,
     status log_status NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id),
     -- UserBoardへの外部キー (親のPK順序と一致させる)
-    CONSTRAINT fk_log_user_board FOREIGN KEY (board_id, uid) REFERENCES user_board(board_id, uid),
+    CONSTRAINT fk_log_user_board FOREIGN KEY (board_id, uid) REFERENCES user_board(board_id, uid) ON DELETE CASCADE,
     -- Cellへの外部キー
     CONSTRAINT fk_log_cell FOREIGN KEY (board_id, row_idx, col_idx) REFERENCES cell(board_id, row_idx, col_idx)
 );
