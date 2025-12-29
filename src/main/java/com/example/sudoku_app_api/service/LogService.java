@@ -1,5 +1,7 @@
 package com.example.sudoku_app_api.service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sudoku_app_api.entity.Cell;
 import com.example.sudoku_app_api.entity.Log;
+import com.example.sudoku_app_api.entity.UserBoard;
 import com.example.sudoku_app_api.repository.LogQueryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,5 +37,12 @@ public class LogService {
 
     public long getUniqueSolvedCellsCount(String uid, Long boardId) {
         return logQueryRepository.countUniqueSolvedCells(uid, boardId);
+    }
+
+    public boolean hasRecentHint(String uid, Long boardId) {
+        UserBoard.UserBoardId id = UserBoard.UserBoardId.create(uid, boardId);
+        Instant oneMinuteBefore = Instant.now().minus(Duration.ofMinutes(1));
+
+        return logQueryRepository.existsRecentHint(id, oneMinuteBefore);
     }
 }

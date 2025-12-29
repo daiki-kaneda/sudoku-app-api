@@ -1,5 +1,6 @@
 package com.example.sudoku_app_api.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -9,14 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sudoku_app_api.controller.dto.BoardProgressDTO;
 import com.example.sudoku_app_api.controller.dto.CellInputResultDTO;
 import com.example.sudoku_app_api.controller.dto.CellProgressDTO;
+import com.example.sudoku_app_api.controller.dto.HintResultDTO;
 import com.example.sudoku_app_api.entity.Board;
 import com.example.sudoku_app_api.entity.Cell;
 import com.example.sudoku_app_api.entity.Log;
 import com.example.sudoku_app_api.entity.User;
 import com.example.sudoku_app_api.entity.UserBoard;
+import com.example.sudoku_app_api.entity.Log.LogStatus;
 import com.example.sudoku_app_api.entity.UserBoard.UserBoardId;
 import com.example.sudoku_app_api.repository.LogRepository;
 import com.example.sudoku_app_api.repository.UserBoardQueryRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -79,5 +84,40 @@ public class SudokuService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public HintResultDTO getHint(
+            Jwt jwt, Long boardId) {
+        User user = userService.getOrCreateUser(jwt);
+        String uid = user.getUid();
+        if (logService.hasRecentHint(uid, boardId)) {
+            throw new IllegalStateException("ヒントは１分１回までです。");
+        }
+
+        Map<Cell.CellId,Log> successLogs = logService.successLogs(uid,boardId);
+
+        UserBoard.UserBoardId id = UserBoard.UserBoardId.create(uid, boardId);
+        UserBoard userBoard = ubQueryRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("ゲームが開始されていません。"));
+        Cell emptyUnSolvedCells = userBoard.getBoard().getEmptyCells().stream() //元々からの空きマス
+                .filter(c -> !successLogs.containsKey(c.getId())) // かつ成功していないマス
+                .findAny()
+                .orElseThrow(()->new IllegalStateException("ヒントを出せるマスがありません。"))
+        ;
+
+        Log hintUsedLog = Log.create(userBoard, emptyUnSolvedCells, null, LogStatus.HINT_USED);
+        Log successLog = Log.create(userBoard, emptyUnSolvedCells, emptyUnSolvedCells.getCorrectValue(),
+                LogStatus.SOLVED);
+
+        logRepository.saveAll(List.of(hintUsedLog, successLog));
+
+        boolean isCompleted = checkAndSetComplete(userBoard);
+
+        return new HintResultDTO(
+                emptyUnSolvedCells.getId().getRow(),
+                emptyUnSolvedCells.getId().getColumn(),
+                emptyUnSolvedCells.getCorrectValue(),
+                isCompleted);
     }
 }
