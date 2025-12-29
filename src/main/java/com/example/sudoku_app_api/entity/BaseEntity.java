@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,7 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity<ID extends Serializable> implements Serializable {
     @CreatedDate
-    @Column(nullable = false,updatable = false)
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
@@ -30,31 +30,24 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
 
-        // Hibernateプロキシ対策のクラス型チェック
-        Class<?> oEffectiveClass = o instanceof HibernateProxy 
-            ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() 
-            : o.getClass();
+        // Hibernateのユーティリティを使用してプロキシを考慮したクラス比較を行う
+        if (Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
         
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy 
-            ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() 
-            : this.getClass();
-
-        if (thisEffectiveClass != oEffectiveClass) return false;
-
         BaseEntity<?> that = (BaseEntity<?>) o;
-        
-        // IDがnull（未永続化）の場合は「等しくない」とみなす
+
+        // IDが存在しない（未保存）場合は、インスタンスが同一でない限り不等とみなす
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        // 常に定数を返す（プロキシクラスのhashCode問題も回避）
-        return this instanceof HibernateProxy 
-            ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() 
-            : getClass().hashCode();
+        // IDではなく定数を返すことで、保存前後での一貫性を保つ
+        return Hibernate.getClass(this).hashCode();
     }
 }
