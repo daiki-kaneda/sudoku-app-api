@@ -21,7 +21,6 @@ import com.example.sudoku_app_api.entity.UserBoard.UserBoardId;
 import com.example.sudoku_app_api.repository.LogRepository;
 import com.example.sudoku_app_api.repository.UserBoardQueryRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -99,7 +98,7 @@ public class SudokuService {
 
         UserBoard.UserBoardId id = UserBoard.UserBoardId.create(uid, boardId);
         UserBoard userBoard = ubQueryRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("ゲームが開始されていません。"));
+                () -> new IllegalStateException("ゲームが開始されていません。"));
         Cell emptyUnSolvedCells = userBoard.getBoard().getEmptyCells().stream() //元々からの空きマス
                 .filter(c -> !successLogs.containsKey(c.getId())) // かつ成功していないマス
                 .findAny()
