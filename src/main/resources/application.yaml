@@ -31,3 +31,5 @@ spring:
 sudoku:
   game:
     max-in-progress: ${MAX_IN_PROGRESS:3}
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
