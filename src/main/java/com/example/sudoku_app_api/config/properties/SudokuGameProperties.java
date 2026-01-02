@@ -11,4 +11,5 @@ import lombok.Data;
 public class SudokuGameProperties {
     /** 同時に進行可能な数独の最大数 */
     private int maxInProgress = 3;
+    private int hintIntervalMinutes = 1;
 }
