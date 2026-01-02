@@ -23,42 +23,58 @@ public class Log extends BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // --- DBへの書き込みを担当する基本フィールド (読み書きOK) ---
+    @Column(name = "uid", nullable = false)
+    private String uid;
+
+    @Column(name = "board_id", nullable = false)
+    private Long boardId;
+
+    @Column(name = "row_idx", nullable = false)
+    private Integer rowIdx;
+
+    @Column(name = "col_idx", nullable = false)
+    private Integer colIdx;
+
+    // --- オブジェクト間の関連 (すべて読み取り専用 insertable=false, updatable=false で統一) ---
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "uid", referencedColumnName = "uid"),
-            @JoinColumn(name = "board_id", referencedColumnName = "board_id") })
+            @JoinColumn(name = "uid", referencedColumnName = "uid", insertable = false, updatable = false),
+            @JoinColumn(name = "board_id", referencedColumnName = "board_id", insertable = false, updatable = false) 
+    })
     private UserBoard userBoard;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "board_id", referencedColumnName = "board_id", insertable = false, updatable = false),
             @JoinColumn(name = "row_idx", referencedColumnName = "row_idx", insertable = false, updatable = false),
-            @JoinColumn(name = "col_idx", referencedColumnName = "col_idx", insertable = false, updatable = false) })
+            @JoinColumn(name = "col_idx", referencedColumnName = "col_idx", insertable = false, updatable = false) 
+    })
     private Cell cell;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private LogStatus status; // solved,failed,hintUsed
+    private LogStatus status;
 
     private Integer inputNumber;
 
-    public static Log create(
-            UserBoard userBoard,
-            Cell cell,
-            Integer inputNumber,
-            LogStatus status) {
+    public static Log create(UserBoard userBoard, Cell cell, Integer inputNumber, LogStatus status) {
         Log log = new Log();
+        
+        log.uid = userBoard.getUser().getUid();
+        log.boardId = userBoard.getBoard().getId();
+        log.rowIdx = cell.getId().getRow();
+        log.colIdx = cell.getId().getColumn();
+
         log.userBoard = userBoard;
         log.cell = cell;
+        
         log.inputNumber = inputNumber;
         log.status = status;
         return log;
     }
 
-    public static enum LogStatus {
-        SOLVED,
-        FAILED,
-        HINT_USED;
+    public enum LogStatus {
+        SOLVED, FAILED, HINT_USED;
     }
-
 }
