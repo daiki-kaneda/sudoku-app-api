@@ -30,6 +30,7 @@ spring:
     
 sudoku:
   game:
-    max-in-progress: ${MAX_IN_PROGRESS:3}
+    max-in-progress: ${MAX_IN_PROGRESS:3},
+    hint-interval-minutes: ${HINT_INTERVAL_MINUTES:1}
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
