@@ -2,7 +2,7 @@ spring:
   application:
     name: sudoku-app-api
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/sudokudb}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sudokudb?stringtype=unspecified}
     username: ${DB_USER:user}
     password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
