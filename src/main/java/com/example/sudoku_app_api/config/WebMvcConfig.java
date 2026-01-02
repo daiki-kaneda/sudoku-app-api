@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    @Value("sudoku.cors.allowed-origins")
+    @Value("${sudoku.cors.allowed-origins}")
     private String allowedOrigins;
 
     @Override
